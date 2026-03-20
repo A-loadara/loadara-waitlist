@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Loadara — Dump Truck Logistics, Simplified</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --slate-950: #0B0F19;
+    --slate-900: #0F1629;
+    --slate-800: #1A2035;
+    --slate-700: #243049;
+    --slate-600: #334766;
+    --slate-500: #4A6282;
+    --slate-400: #728BA8;
+    --slate-300: #9BB0C8;
+    --slate-200: #C5D3E3;
+    --slate-100: #E8EDF4;
+    --white: #FFFFFF;
+    --blue-600: #2563EB;
+    --blue-500: #3B82F6;
+    --blue-400: #60A5FA;
+    --blue-50: rgba(37,99,235,0.08);
+    --amber-500: #D97706;
+    --amber-400: #F59E0B;
+    --amber-50: rgba(217,119,6,0.08);
+    --green-500: #16A34A;
+    --green-400: #22C55E;
+    --green-50: rgba(22,163,74,0.08);
+    --red-500: #DC2626;
+    --red-400: #F87171;
+    --red-50: rgba(220,38,38,0.08);
+    --bg: var(--slate-950);
+    --surface: var(--slate-900);
+    --card: var(--slate-800);
+    --border: var(--slate-700);
+    --border-subtle: rgba(255,255,255,0.06);
+    --text-primary: var(--slate-100);
+    --text-secondary: var(--slate-400);
+    --text-muted: var(--slate-500);
+    --radius-sm: 0.25rem;
+    --radius-md: 0.375rem;
+    --radius: 0.5rem;
+    --radius-lg: 0.75rem;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg);color:var(--text-secondary);overflow-x:hidden;-webkit-font-smoothing:antialiased;font-size:14px;line-height:1.5}
+
+  /* ─── NAV ─── */
+  nav{position:fixed;top:0;width:100%;z-index:100;padding:0 1.5rem;height:56px;display:flex;justify-content:space-between;align-items:center;background:rgba(11,15,25,0.88);backdrop-filter:blur(16px);border-bottom:1px solid var(--border-subtle)}
+  .logo{display:flex;align-items:center;gap:0.5rem;font-weight:700;font-size:0.95rem;color:var(--text-primary);letter-spacing:-0.2px}
+  .logo-icon{width:28px;height:28px;background:var(--blue-600);border-radius:var(--radius-md);display:grid;place-items:center;color:white;font-size:0.75rem;font-weight:700}
+  .nav-right{display:flex;align-items:center;gap:1.5rem}
+  .nav-link{font-size:0.8rem;color:var(--text-secondary);text-decoration:none;font-weight:500;transition:color 0.15s}
+  .nav-link:hover{color:var(--text-primary)}
+  .btn-primary{font-family:'Inter',sans-serif;font-weight:600;font-size:0.8rem;padding:0.45rem 1rem;background:var(--blue-600);color:var(--white);border:none;border-radius:var(--radius);cursor:pointer;text-decoration:none;transition:all 0.15s}
+  .btn-primary:hover{background:var(--blue-500)}
+
+  /* ─── HERO ─── */
+  .hero{min-height:100vh;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:7rem 1.5rem 4rem;position:relative}
+  .hero::after{content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);width:600px;height:500px;background:radial-gradient(ellipse,rgba(37,99,235,0.06) 0%,transparent 70%);pointer-events:none}
+
+  .badge{display:inline-flex;align-items:center;gap:0.4rem;padding:0.3rem 0.75rem;background:var(--surface);border:1px solid var(--border-subtle);border-radius:100px;font-size:0.7rem;color:var(--blue-400);font-weight:600;letter-spacing:0.3px;text-transform:uppercase;margin-bottom:1.5rem;animation:fadeUp 0.5s ease both}
+  .badge-dot{width:5px;height:5px;border-radius:50%;background:var(--green-400);animation:pulse 2s infinite}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:0.3}}
+  @keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+  @keyframes fadeIn{from{opacity:0}to{opacity:1}}
+
+  h1{font-weight:700;font-size:clamp(2rem,5vw,3.25rem);line-height:1.12;color:var(--text-primary);letter-spacing:-1.2px;max-width:620px;margin-bottom:1rem;animation:fadeUp 0.5s ease 0.05s both}
+  h1 .hl{color:var(--amber-400)}
+  .subtitle{font-size:0.95rem;color:var(--text-secondary);max-width:460px;line-height:1.65;margin-bottom:2rem;animation:fadeUp 0.5s ease 0.1s both}
+
+  /* ─── STEP INDICATOR ─── */
+  .step-indicator{display:flex;align-items:center;gap:0.5rem;margin-bottom:1.5rem;animation:fadeUp 0.5s ease 0.12s both}
+  .step-dot{width:8px;height:8px;border-radius:50%;background:var(--border);transition:all 0.3s}
+  .step-dot.active{background:var(--blue-500);box-shadow:0 0 0 3px var(--blue-50)}
+  .step-dot.done{background:var(--green-500)}
+  .step-line{width:24px;height:1px;background:var(--border)}
+
+  /* ─── FORM CONTAINER ─── */
+  .form-container{width:100%;max-width:480px;position:relative;z-index:2;animation:fadeUp 0.5s ease 0.15s both}
+
+  /* ─── STEP 1 ─── */
+  .step-1,.step-2,.step-success{transition:all 0.3s ease}
+  .step-hidden{display:none}
+
+  .signup-row{display:flex;gap:0.5rem}
+  .signup-row input{flex:1;padding:0.6rem 0.85rem;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);color:var(--text-primary);font-family:'Inter',sans-serif;font-size:0.85rem;outline:none;transition:border-color 0.15s,box-shadow 0.15s}
+  .signup-row input:focus{border-color:var(--blue-500);box-shadow:0 0 0 3px var(--blue-50)}
+  .signup-row input::placeholder{color:var(--text-muted)}
+  .signup-row button{padding:0.6rem 1.4rem;background:var(--blue-600);color:var(--white);font-family:'Inter',sans-serif;font-weight:600;font-size:0.85rem;border:none;border-radius:var(--radius);cursor:pointer;transition:all 0.15s;white-space:nowrap}
+  .signup-row button:hover{background:var(--blue-500)}
+
+  .role-select{display:flex;gap:0.35rem;margin-top:0.6rem;flex-wrap:wrap;justify-content:center}
+  .role-chip{padding:0.3rem 0.65rem;background:transparent;border:1px solid var(--border);border-radius:100px;color:var(--text-muted);font-size:0.72rem;font-weight:500;cursor:pointer;transition:all 0.15s;font-family:'Inter',sans-serif;user-select:none}
+  .role-chip:hover,.role-chip.active{border-color:var(--blue-500);color:var(--blue-400);background:var(--blue-50)}
+  .form-note{margin-top:0.75rem;font-size:0.7rem;color:var(--text-muted)}
+
+  /* ─── STEP 2: QUESTIONNAIRE ─── */
+  .step-2{animation:fadeIn 0.4s ease both}
+  .q-header{margin-bottom:1.25rem;text-align:left}
+  .q-header h3{font-weight:600;font-size:1rem;color:var(--text-primary);margin-bottom:0.25rem}
+  .q-header p{font-size:0.8rem;color:var(--text-secondary)}
+
+  .q-group{margin-bottom:1.1rem;text-align:left}
+  .q-label{display:block;font-size:0.72rem;font-weight:600;color:var(--text-secondary);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:0.4rem}
+  .q-sublabel{display:block;font-size:0.7rem;color:var(--text-muted);margin-bottom:0.4rem;font-weight:400;text-transform:none;letter-spacing:0}
+
+  /* Option chips (for single-select questions) */
+  .q-options{display:flex;gap:0.35rem;flex-wrap:wrap}
+  .q-opt{padding:0.35rem 0.7rem;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);color:var(--text-secondary);font-size:0.78rem;font-weight:500;cursor:pointer;transition:all 0.15s;user-select:none}
+  .q-opt:hover{border-color:var(--slate-600);color:var(--text-primary)}
+  .q-opt.selected{border-color:var(--blue-500);color:var(--blue-400);background:var(--blue-50)}
+
+  /* Text input */
+  .q-input{width:100%;padding:0.55rem 0.75rem;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);color:var(--text-primary);font-family:'Inter',sans-serif;font-size:0.82rem;outline:none;transition:border-color 0.15s,box-shadow 0.15s}
+  .q-input:focus{border-color:var(--blue-500);box-shadow:0 0 0 3px var(--blue-50)}
+  .q-input::placeholder{color:var(--text-muted)}
+
+  /* Multi-select chips */
+  .q-multi{display:flex;gap:0.3rem;flex-wrap:wrap}
+  .q-multi .q-opt{font-size:0.72rem}
+
+  .q-actions{display:flex;gap:0.5rem;margin-top:1.25rem;justify-content:space-between;align-items:center}
+  .q-skip{font-size:0.78rem;color:var(--text-muted);cursor:pointer;transition:color 0.15s;background:none;border:none;font-family:'Inter',sans-serif;padding:0.5rem 0}
+  .q-skip:hover{color:var(--text-secondary)}
+  .q-submit{padding:0.55rem 1.3rem;background:var(--blue-600);color:var(--white);font-family:'Inter',sans-serif;font-weight:600;font-size:0.82rem;border:none;border-radius:var(--radius);cursor:pointer;transition:all 0.15s}
+  .q-submit:hover{background:var(--blue-500)}
+
+  /* ─── SUCCESS ─── */
+  .step-success{animation:fadeIn 0.4s ease both;text-align:center;padding:1.5rem 0}
+  .success-check{width:44px;height:44px;border-radius:50%;background:var(--green-50);border:1.5px solid var(--green-500);display:grid;place-items:center;font-size:1.2rem;margin:0 auto 0.6rem}
+  .step-success h3{font-weight:600;color:var(--text-primary);font-size:1rem;margin-bottom:0.25rem}
+  .step-success p{color:var(--text-secondary);font-size:0.85rem;max-width:340px;margin:0 auto}
+
+  /* ─── STATS ─── */
+  .stats-bar{display:flex;gap:0.75rem;margin-top:2.5rem;animation:fadeUp 0.5s ease 0.22s both;flex-wrap:wrap;justify-content:center}
+  .stat-card{padding:0.85rem 1.25rem;background:var(--surface);border:1px solid var(--border-subtle);border-radius:var(--radius);min-width:120px;text-align:left}
+  .stat-card.accent{border-color:var(--amber-500);border-left:3px solid var(--amber-500)}
+  .stat-label{font-size:0.6rem;text-transform:uppercase;letter-spacing:0.6px;color:var(--text-muted);font-weight:600;margin-bottom:0.2rem}
+  .stat-value{font-family:'JetBrains Mono',monospace;font-weight:500;font-size:1.25rem;color:var(--text-primary);font-variant-numeric:tabular-nums}
+
+  /* ─── SECTIONS ─── */
+  .section{padding:4.5rem 1.5rem;max-width:920px;margin:0 auto}
+  .section-label{font-size:0.65rem;text-transform:uppercase;letter-spacing:0.8px;color:var(--blue-400);font-weight:600;margin-bottom:0.5rem}
+  .section-title{font-weight:700;font-size:clamp(1.4rem,2.8vw,1.85rem);color:var(--text-primary);letter-spacing:-0.6px;margin-bottom:2rem;max-width:480px;line-height:1.2}
+
+  .pain-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:0.75rem}
+  .pain-card{padding:1.25rem;background:var(--surface);border:1px solid var(--border-subtle);border-radius:var(--radius-lg);transition:all 0.2s}
+  .pain-card:hover{border-color:var(--border);background:var(--card)}
+  .pain-icon{font-size:1.15rem;margin-bottom:0.7rem}
+  .pain-card h3{font-weight:600;font-size:0.88rem;color:var(--text-primary);margin-bottom:0.3rem}
+  .pain-card p{font-size:0.8rem;color:var(--text-secondary);line-height:1.6}
+
+  .feature-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(195px,1fr));gap:0.75rem}
+  .feature-card{padding:1.15rem;border:1px solid var(--border-subtle);border-radius:var(--radius-lg);background:var(--surface);transition:all 0.2s}
+  .feature-card:hover{border-color:var(--border);background:var(--card)}
+  .feature-tag{display:inline-block;padding:0.15rem 0.45rem;border-radius:var(--radius-sm);font-size:0.6rem;font-weight:600;text-transform:uppercase;letter-spacing:0.3px;margin-bottom:0.6rem}
+  .tag-dispatch{background:var(--blue-50);color:var(--blue-500)}
+  .tag-market{background:var(--amber-50);color:var(--amber-500)}
+  .tag-fintech{background:var(--green-50);color:var(--green-500)}
+  .tag-ai{background:var(--red-50);color:var(--red-500)}
+  .tag-soon{background:rgba(255,255,255,0.04);color:var(--text-muted)}
+  .feature-card h3{font-weight:600;font-size:0.85rem;color:var(--text-primary);margin-bottom:0.25rem}
+  .feature-card p{font-size:0.78rem;color:var(--text-secondary);line-height:1.55}
+  .soon-label{font-size:0.6rem;color:var(--text-muted);font-weight:500;margin-top:0.35rem}
+
+  .preview-cards{display:flex;gap:0.75rem;justify-content:center;flex-wrap:wrap;margin-top:2rem}
+  .preview-frame{width:270px;background:var(--surface);border:1px solid var(--border-subtle);border-radius:var(--radius-lg);overflow:hidden;transition:all 0.2s}
+  .preview-frame:hover{border-color:var(--border)}
+  .preview-header{padding:0.85rem 1rem 0.65rem;border-bottom:1px solid var(--border-subtle)}
+  .ph-label{font-size:0.58rem;text-transform:uppercase;letter-spacing:0.6px;color:var(--text-muted);font-weight:600}
+  .ph-title{font-weight:600;font-size:0.92rem;color:var(--text-primary);margin-top:0.1rem}
+  .ph-sub{font-size:0.72rem;color:var(--text-muted)}
+  .preview-body{padding:0.75rem;display:flex;flex-direction:column;gap:0.4rem}
+  .preview-row{display:flex;justify-content:space-between;align-items:center;padding:0.5rem 0.65rem;background:var(--bg);border-radius:var(--radius);font-size:0.75rem}
+  .preview-row-left{display:flex;flex-direction:column}
+  .preview-row-left span:first-child{color:var(--text-primary);font-weight:500}
+  .preview-row-left .row-sub{font-size:0.65rem;color:var(--text-muted);margin-top:0.1rem}
+  .status{font-size:0.6rem;font-weight:600;padding:0.15rem 0.4rem;border-radius:var(--radius-sm);text-transform:uppercase;letter-spacing:0.3px}
+  .status-confirmed{background:var(--green-50);color:var(--green-500)}
+  .status-progress{background:var(--amber-50);color:var(--amber-500)}
+  .status-pending{background:var(--blue-50);color:var(--blue-500)}
+  .preview-stats{display:grid;grid-template-columns:1fr 1fr;gap:0.4rem;padding:0.75rem}
+  .preview-stat{padding:0.6rem;background:var(--bg);border-radius:var(--radius);border:1px solid var(--border-subtle)}
+  .preview-stat .ps-label{font-size:0.55rem;text-transform:uppercase;letter-spacing:0.5px;color:var(--text-muted);font-weight:600}
+  .preview-stat .ps-val{font-family:'JetBrains Mono',monospace;font-size:1rem;color:var(--text-primary);font-weight:500;font-variant-numeric:tabular-nums}
+
+  .audience-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:0.75rem}
+  .audience-card{padding:1.25rem;background:var(--surface);border:1px solid var(--border-subtle);border-radius:var(--radius-lg);transition:all 0.2s}
+  .audience-card:hover{border-color:var(--border)}
+  .audience-emoji{font-size:1.4rem;margin-bottom:0.55rem}
+  .audience-card h3{font-weight:600;font-size:0.92rem;color:var(--text-primary);margin-bottom:0.3rem}
+  .audience-card p{font-size:0.8rem;color:var(--text-secondary);line-height:1.6}
+
+  .bottom-cta{padding:4.5rem 1.5rem 5.5rem;text-align:center;display:flex;flex-direction:column;align-items:center;position:relative}
+  .bottom-cta::before{content:'';position:absolute;bottom:0;left:50%;transform:translateX(-50%);width:500px;height:300px;background:radial-gradient(circle,rgba(37,99,235,0.04) 0%,transparent 70%);pointer-events:none}
+  .bottom-cta h2{font-weight:700;font-size:clamp(1.4rem,3vw,2rem);color:var(--text-primary);letter-spacing:-0.8px;margin-bottom:0.6rem;max-width:420px;line-height:1.15}
+  .bottom-cta p{color:var(--text-secondary);margin-bottom:1.5rem;font-size:0.9rem}
+
+  footer{padding:1.5rem;border-top:1px solid var(--border-subtle);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:0.75rem;max-width:920px;margin:0 auto}
+  footer .logo{font-size:0.9rem}
+  footer p{font-size:0.7rem;color:var(--text-muted)}
+
+  @media(max-width:640px){
+    nav{padding:0 1rem;height:50px}
+    .nav-link{display:none}
+    .hero{padding:6rem 1.25rem 3rem}
+    .signup-row{flex-direction:column}
+    .signup-row button{width:100%}
+    .stats-bar{gap:0.5rem}
+    .stat-card{min-width:95px;padding:0.7rem 0.9rem}
+    .stat-value{font-size:1.05rem}
+    .section{padding:3rem 1.25rem}
+    .preview-cards{flex-direction:column;align-items:center}
+    .bottom-cta{padding:3rem 1.25rem 4rem}
+    footer{flex-direction:column;text-align:center}
+    .q-actions{flex-direction:column-reverse;gap:0.35rem}
+    .q-submit{width:100%}
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="logo"><div class="logo-icon">L</div>Loadara</div>
+  <div class="nav-right">
+    <a href="#features" class="nav-link">Features</a>
+    <a href="#preview" class="nav-link">Preview</a>
+    <a href="#who" class="nav-link">Who It's For</a>
+    <a href="#signup" class="btn-primary">Join Waitlist</a>
+  </div>
+</nav>
+
+<section class="hero" id="signup">
+  <div class="badge"><span class="badge-dot"></span>Accepting early access signups</div>
+  <h1>Stop chasing loads.<br>Start <span class="hl">loading</span> up.</h1>
+  <p class="subtitle">The AI-powered platform for dump truck operators, fleet owners, brokers, and contractors — connecting loads, trucks, and payments in one place.</p>
+
+  <!-- Step indicator -->
+  <div class="step-indicator" id="stepIndicator">
+    <div class="step-dot active" id="dot1"></div>
+    <div class="step-line"></div>
+    <div class="step-dot" id="dot2"></div>
+  </div>
+
+  <div class="form-container">
+
+    <!-- ═══ STEP 1: Email + Role ═══ -->
+    <div class="step-1" id="step1">
+      <div class="signup-row">
+        <input type="email" id="emailInput" placeholder="Your email address" autocomplete="email">
+        <button onclick="goToStep2()">Get Early Access</button>
+      </div>
+      <div class="role-select" id="roleSelect">
+        <span class="role-chip" onclick="selectRole(this)">Owner-Operator</span>
+        <span class="role-chip" onclick="selectRole(this)">Fleet Owner</span>
+        <span class="role-chip" onclick="selectRole(this)">Contractor / GC</span>
+        <span class="role-chip" onclick="selectRole(this)">Broker</span>
+        <span class="role-chip" onclick="selectRole(this)">Other</span>
+      </div>
+      <p class="form-note">Free to join — we'll notify you before launch with early access perks.</p>
+    </div>
+
+    <!-- ═══ STEP 2: Mini Questionnaire ═══ -->
+    <div class="step-2 step-hidden" id="step2">
+      <div class="q-header">
+        <h3>Help us build Loadara for you</h3>
+        <p>Takes 30 seconds. Every answer shapes what we build first.</p>
+      </div>
+
+      <!-- Fleet size (adapts label based on role) -->
+      <div class="q-group">
+        <label class="q-label" id="fleetLabel">How many trucks?</label>
+        <div class="q-options" id="fleetOptions">
+          <span class="q-opt" onclick="selectOpt(this,'fleet')">1</span>
+          <span class="q-opt" onclick="selectOpt(this,'fleet')">2–5</span>
+          <span class="q-opt" onclick="selectOpt(this,'fleet')">6–15</span>
+          <span class="q-opt" onclick="selectOpt(this,'fleet')">16–50</span>
+          <span class="q-opt" onclick="selectOpt(this,'fleet')">50+</span>
+        </div>
+      </div>
+
+      <!-- Drivers / carriers in network (shown for fleet owners & brokers) -->
+      <div class="q-group" id="driversGroup" style="display:none">
+        <label class="q-label" id="driversLabel">Drivers in your operation</label>
+        <div class="q-options">
+          <span class="q-opt" onclick="selectOpt(this,'drivers')">1–3</span>
+          <span class="q-opt" onclick="selectOpt(this,'drivers')">4–10</span>
+          <span class="q-opt" onclick="selectOpt(this,'drivers')">11–25</span>
+          <span class="q-opt" onclick="selectOpt(this,'drivers')">25+</span>
+        </div>
+      </div>
+
+      <!-- Trucks needed per job (shown for contractors) -->
+      <div class="q-group" id="trucksNeededGroup" style="display:none">
+        <label class="q-label">Trucks you typically need on a job</label>
+        <div class="q-options">
+          <span class="q-opt" onclick="selectOpt(this,'trucks_needed')">1–5</span>
+          <span class="q-opt" onclick="selectOpt(this,'trucks_needed')">6–15</span>
+          <span class="q-opt" onclick="selectOpt(this,'trucks_needed')">16–30</span>
+          <span class="q-opt" onclick="selectOpt(this,'trucks_needed')">30+</span>
+        </div>
+      </div>
+
+      <!-- Location -->
+      <div class="q-group">
+        <label class="q-label">Where are you based?</label>
+        <input class="q-input" type="text" id="locationInput" placeholder="City, State (e.g. Raleigh, NC)" autocomplete="address-level2">
+      </div>
+
+      <!-- How they dispatch today -->
+      <div class="q-group">
+        <label class="q-label">How do you handle dispatch today?</label>
+        <div class="q-multi">
+          <span class="q-opt" onclick="toggleMulti(this,'dispatch')">Phone/Text</span>
+          <span class="q-opt" onclick="toggleMulti(this,'dispatch')">Spreadsheets</span>
+          <span class="q-opt" onclick="toggleMulti(this,'dispatch')">Paper tickets</span>
+          <span class="q-opt" onclick="toggleMulti(this,'dispatch')">Software tool</span>
+          <span class="q-opt" onclick="toggleMulti(this,'dispatch')">Dispatcher on staff</span>
+          <span class="q-opt" onclick="toggleMulti(this,'dispatch')">WhatsApp/GroupMe</span>
+        </div>
+      </div>
+
+      <!-- Biggest pain -->
+      <div class="q-group">
+        <label class="q-label">Biggest pain point right now</label>
+        <span class="q-sublabel">Pick the one that costs you the most time or money</span>
+        <div class="q-options" id="painOptions">
+          <span class="q-opt" onclick="selectOpt(this,'pain')">Finding loads</span>
+          <span class="q-opt" onclick="selectOpt(this,'pain')">Getting paid on time</span>
+          <span class="q-opt" onclick="selectOpt(this,'pain')">Dispatch coordination</span>
+          <span class="q-opt" onclick="selectOpt(this,'pain')">Tracking tickets/loads</span>
+          <span class="q-opt" onclick="selectOpt(this,'pain')">Invoicing & billing</span>
+          <span class="q-opt" onclick="selectOpt(this,'pain')">Finding reliable drivers</span>
+        </div>
+      </div>
+
+      <div class="q-actions">
+        <button class="q-skip" onclick="skipStep2()">Skip for now</button>
+        <button class="q-submit" onclick="submitAll()">Complete Signup →</button>
+      </div>
+    </div>
+
+    <!-- ═══ SUCCESS ═══ -->
+    <div class="step-success step-hidden" id="stepSuccess">
+      <div class="success-check">✓</div>
+      <h3>You're on the list.</h3>
+      <p>We'll be in touch soon with early access details. Keep an eye on your inbox.</p>
+    </div>
+  </div>
+
+  <div class="stats-bar">
+    <div class="stat-card">
+      <div class="stat-label">On Waitlist</div>
+      <div class="stat-value" id="counter">0</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Launch Modules</div>
+      <div class="stat-value">3</div>
+    </div>
+    <div class="stat-card accent">
+      <div class="stat-label">Launch Year</div>
+      <div class="stat-value">2026</div>
+    </div>
+  </div>
+</section>
+
+<!-- PROBLEMS -->
+<section class="section">
+  <p class="section-label">The Problem</p>
+  <h2 class="section-title">Dump truck logistics is stuck in the past</h2>
+  <div class="pain-grid">
+    <div class="pain-card"><div class="pain-icon">📱</div><h3>Dispatch by text &amp; phone tag</h3><p>Juggling calls, texts, and group chats to fill trucks or find loads. One missed message means lost revenue.</p></div>
+    <div class="pain-card"><div class="pain-icon">💸</div><h3>60–90 day payment cycles</h3><p>You haul today, get paid in two months. Meanwhile fuel, tires, and insurance don't wait.</p></div>
+    <div class="pain-card"><div class="pain-icon">🔍</div><h3>No visibility into the market</h3><p>Who's hauling what, at what rate, where? Without data you're guessing — and leaving money on the table.</p></div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section class="section" id="features">
+  <p class="section-label">The Platform</p>
+  <h2 class="section-title">One platform for loads, trucks, and money</h2>
+  <div class="feature-grid">
+    <div class="feature-card">
+      <span class="feature-tag tag-dispatch">At Launch</span>
+      <h3>Smart Dispatch</h3>
+      <p>Create jobs, assign drivers, confirm dispatches, and track status in real time. Replace the group text.</p>
+    </div>
+    <div class="feature-card">
+      <span class="feature-tag tag-dispatch">At Launch</span>
+      <h3>Fleet Management</h3>
+      <p>Trucks, drivers, maintenance, compliance, and customers — your entire operation in one place.</p>
+    </div>
+    <div class="feature-card">
+      <span class="feature-tag tag-dispatch">At Launch</span>
+      <h3>Work Tickets & Invoicing</h3>
+      <p>Log loads, generate invoices from completed tickets, and keep a clean billing trail.</p>
+    </div>
+    <div class="feature-card" style="opacity:0.7">
+      <span class="feature-tag tag-soon">Coming Next</span>
+      <h3>Payments & Fast Pay</h3>
+      <p>On-platform payments, invoice factoring, and embedded lending so you get paid in days, not months.</p>
+    </div>
+    <div class="feature-card" style="opacity:0.7">
+      <span class="feature-tag tag-soon">Coming Next</span>
+      <h3>Load Marketplace</h3>
+      <p>Post and find dump truck loads beyond your existing network. Transparent rates. Verified participants.</p>
+    </div>
+  </div>
+</section>
+
+<!-- PREVIEW -->
+<section class="section" id="preview" style="text-align:center;">
+  <p class="section-label">Sneak Peek</p>
+  <h2 class="section-title" style="margin-left:auto;margin-right:auto;">Built for how you actually work</h2>
+  <div class="preview-cards">
+    <div class="preview-frame">
+      <div class="preview-header"><div class="ph-label">Driver View</div><div class="ph-title">Today's Dispatches</div><div class="ph-sub">Truck #101 · Big Red</div></div>
+      <div class="preview-body">
+        <div class="preview-row"><div class="preview-row-left"><span>ABC Excavating</span><span class="row-sub">6:00 AM · Clean Fill</span></div><span class="status status-confirmed">Confirmed</span></div>
+        <div class="preview-row"><div class="preview-row-left"><span>Lakefront Development</span><span class="row-sub">7:00 AM · Crushed Stone</span></div><span class="status status-progress">In Progress</span></div>
+        <div class="preview-row"><div class="preview-row-left"><span>Metro Grading Co</span><span class="row-sub">10:00 AM · Topsoil</span></div><span class="status status-pending">Pending</span></div>
+      </div>
+    </div>
+    <div class="preview-frame">
+      <div class="preview-header"><div class="ph-label">Fleet View</div><div class="ph-title">Dispatch Board</div><div class="ph-sub">Real-time operations command center</div></div>
+      <div class="preview-stats">
+        <div class="preview-stat"><div class="ps-label">Active Jobs</div><div class="ps-val">5</div></div>
+        <div class="preview-stat"><div class="ps-label">Drivers Working</div><div class="ps-val">4</div></div>
+        <div class="preview-stat"><div class="ps-label">Available</div><div class="ps-val">2</div></div>
+        <div class="preview-stat"><div class="ps-label">Pending Review</div><div class="ps-val">6</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- WHO IT'S FOR -->
+<section class="section" id="who">
+  <p class="section-label">Who It's For</p>
+  <h2 class="section-title">Built for the people who haul a$*</h2>
+  <div class="audience-grid">
+    <div class="audience-card"><div class="audience-emoji">🚛</div><h3>Owner-Operators</h3><p>Find loads, get paid faster, and stop relying on word-of-mouth. Your truck, your business, your data.</p></div>
+    <div class="audience-card"><div class="audience-emoji">🚧</div><h3>Fleet Owners</h3><p>Dispatch your trucks, manage your drivers, and handle billing from one place. Run the fleet, not the paperwork.</p></div>
+    <div class="audience-card"><div class="audience-emoji">🏗️</div><h3>Contractors &amp; GCs</h3><p>Need 15 trucks at a site by 7am? Post the job, get matched, and track every load — no spreadsheet required.</p></div>
+    <div class="audience-card"><div class="audience-emoji">📋</div><h3>Brokers</h3><p>Connect contractors to haulers, manage your carrier network, and keep every job and payment organized in one platform.</p></div>
+  </div>
+</section>
+
+<section class="bottom-cta">
+  <h2>The dump truck industry deserves better tools.</h2>
+  <p>Join the operators and contractors getting early access.</p>
+  <a href="#signup" class="btn-primary" style="font-size:0.9rem;padding:0.65rem 1.75rem;">Join the Waitlist →</a>
+</section>
+
+<footer>
+  <div class="logo"><div class="logo-icon" style="width:22px;height:22px;font-size:0.6rem;">L</div>Loadara</div>
+  <p>© 2026 Loadara. All rights reserved.</p>
+</footer>
+
+<script>
+  // ── State ──
+  let signupData = { email: '', roles: [], survey: {} };
+
+  // ── Role chips (multi-select) ──
+  function selectRole(el) { el.classList.toggle('active'); }
+
+  // ── Single-select options ──
+  function selectOpt(el, group) {
+    el.parentElement.querySelectorAll('.q-opt').forEach(o => o.classList.remove('selected'));
+    el.classList.add('selected');
+    signupData.survey[group] = el.textContent;
+  }
+
+  // ── Multi-select options ──
+  function toggleMulti(el, group) {
+    el.classList.toggle('selected');
+    const selected = [...el.parentElement.querySelectorAll('.q-opt.selected')].map(o => o.textContent);
+    signupData.survey[group] = selected;
+  }
+
+  // ── Step 1 → Step 2 ──
+  function goToStep2() {
+    const email = document.getElementById('emailInput').value.trim();
+    if (!email || !email.includes('@')) {
+      const input = document.getElementById('emailInput');
+      input.style.borderColor = 'var(--red-400)';
+      input.style.boxShadow = '0 0 0 3px var(--red-50)';
+      setTimeout(() => { input.style.borderColor = 'var(--border)'; input.style.boxShadow = 'none'; }, 1500);
+      return;
+    }
+
+    signupData.email = email;
+    signupData.roles = [...document.querySelectorAll('.role-chip.active')].map(c => c.textContent);
+
+    // Adapt questionnaire based on role
+    adaptQuestions(signupData.roles);
+
+    // Transition
+    document.getElementById('step1').classList.add('step-hidden');
+    document.getElementById('step2').classList.remove('step-hidden');
+    document.getElementById('dot1').classList.remove('active');
+    document.getElementById('dot1').classList.add('done');
+    document.getElementById('dot2').classList.add('active');
+  }
+
+  // ── Adapt questions based on role ──
+  function adaptQuestions(roles) {
+    const isOperator = roles.includes('Owner-Operator');
+    const isFleet = roles.includes('Fleet Owner');
+    const isBroker = roles.includes('Broker');
+    const isContractor = roles.includes('Contractor / GC');
+
+    // Fleet size label
+    if (isContractor && !isOperator && !isFleet) {
+      document.getElementById('fleetLabel').textContent = 'Trucks you own or lease';
+    } else if (isBroker) {
+      document.getElementById('fleetLabel').textContent = 'Trucks in your network';
+    } else {
+      document.getElementById('fleetLabel').textContent = 'How many trucks in your fleet?';
+    }
+
+    // Show drivers group for fleet owners & brokers
+    if (isFleet || isBroker) {
+      document.getElementById('driversGroup').style.display = 'block';
+      document.getElementById('driversLabel').textContent = isBroker
+        ? 'Haulers / carriers in your network'
+        : 'Drivers in your operation';
+    }
+
+    // Show trucks needed for contractors
+    if (isContractor) {
+      document.getElementById('trucksNeededGroup').style.display = 'block';
+    }
+  }
+
+  // ── Skip step 2 ──
+  function skipStep2() {
+    // Still save the email + role from step 1
+    submitToDatabase();
+    showSuccess();
+  }
+
+  // ── Submit all ──
+  function submitAll() {
+    signupData.survey.location = document.getElementById('locationInput').value.trim();
+    submitToDatabase();
+    showSuccess();
+  }
+
+  // ── Submit to DB (placeholder — wire to Supabase) ──
+  function submitToDatabase() {
+    const params = new URLSearchParams(window.location.search);
+    const payload = {
+      ...signupData,
+      utm_source: params.get('utm_source'),
+      utm_medium: params.get('utm_medium'),
+      utm_campaign: params.get('utm_campaign'),
+      referrer: document.referrer || null,
+    };
+    console.log('Waitlist signup:', payload);
+    // TODO: Supabase insert here
+  }
+
+  // ── Show success ──
+  function showSuccess() {
+    document.getElementById('step2').classList.add('step-hidden');
+    document.getElementById('stepSuccess').classList.remove('step-hidden');
+    document.getElementById('dot2').classList.remove('active');
+    document.getElementById('dot2').classList.add('done');
+    document.getElementById('stepIndicator').style.display = 'none';
+  }
+
+  // ── Counter animation ──
+  function animateCounter(target) {
+    const el = document.getElementById('counter');
+    let current = 0;
+    const step = Math.max(1, Math.floor(target / 35));
+    const interval = setInterval(() => {
+      current += step;
+      if (current >= target) { current = target; clearInterval(interval); }
+      el.textContent = current;
+    }, 28);
+  }
+  const obs = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if (e.isIntersecting) { animateCounter(47); obs.disconnect(); } });
+  });
+  obs.observe(document.getElementById('counter'));
+
+  // ── Enter key ──
+  document.getElementById('emailInput').addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') goToStep2();
+  });
+</script>
+</body>
+</html>
