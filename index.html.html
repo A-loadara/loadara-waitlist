@@ -6,6 +6,7 @@
 <title>Loadara | Dump Truck Logistics, Simplified</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
   :root {
     --slate-950: #0B0F19;
@@ -306,6 +307,12 @@
         </div>
       </div>
 
+      <!-- Company Name -->
+      <div class="q-group">
+        <label class="q-label">Company / Business Name <span style="color:var(--text-muted);font-weight:400;text-transform:none;letter-spacing:0">(optional)</span></label>
+        <input class="q-input" type="text" id="companyInput" placeholder="e.g. Big Red Trucking LLC" autocomplete="organization">
+      </div>
+
       <!-- Location -->
       <div class="q-group">
         <label class="q-label">Where are you based?</label>
@@ -353,7 +360,7 @@
     </div>
   </div>
 
-  <div class="stats-bar">
+  <div class="stats-bar" style="display:none"><!-- Unhide when ready to show public count -->
     <div class="stat-card">
       <div class="stat-label">On Waitlist</div>
       <div class="stat-value" id="counter">0</div>
@@ -464,7 +471,7 @@
 <!-- WHO IT'S FOR -->
 <section class="section" id="who">
   <p class="section-label">Who It's For</p>
-  <h2 class="section-title">Built for the people who haul a$*</h2>
+  <h2 class="section-title">Built for operators, owners, and everyone in between</h2>
   <div class="audience-grid">
     <div class="audience-card"><div class="audience-emoji">🚛</div><h3>Owner-Operators</h3><p>Find loads, get paid faster, and stop relying on word-of-mouth. Your truck, your business, your data.</p></div>
     <div class="audience-card"><div class="audience-emoji">🚧</div><h3>Fleet Owners</h3><p>Dispatch your trucks, manage your drivers, and handle billing from one place. Run the fleet, not the paperwork.</p></div>
@@ -560,48 +567,76 @@
     }
   }
 
+  // ── Supabase ──
+  const SUPABASE_URL  = 'https://wfsahcwnonvfyzyrnnqr.supabase.co';
+  const SUPABASE_ANON = 'sb_publishable_Z9rK4YH8y2yED7VE6iUtjQ_AfOhCOdS';
+  const db = supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
+
   // ── Skip step 2 ──
   function skipStep2() {
-    // Still save the email + role from step 1
     submitToDatabase();
-    showSuccess();
   }
 
   // ── Submit all ──
   function submitAll() {
+    const company = document.getElementById('companyInput').value.trim();
+    if (company) signupData.survey.company_name = company;
     signupData.survey.location = document.getElementById('locationInput').value.trim();
     submitToDatabase();
-    showSuccess();
   }
 
-  // ── Submit to DB (placeholder - wire to Supabase) ──
-  function submitToDatabase() {
-    const params = new URLSearchParams(window.location.search);
+  // ── Submit to Supabase ──
+  async function submitToDatabase() {
+    const btn     = document.querySelector('.q-submit');
+    const skipBtn = document.querySelector('.q-skip');
+    if (btn)     { btn.textContent = 'Saving…'; btn.disabled = true; }
+    if (skipBtn) { skipBtn.disabled = true; }
+
+    const params  = new URLSearchParams(window.location.search);
     const payload = {
-      ...signupData,
-      utm_source: params.get('utm_source'),
-      utm_medium: params.get('utm_medium'),
-      utm_campaign: params.get('utm_campaign'),
-      referrer: document.referrer || null,
+      email:        signupData.email,
+      roles:        signupData.roles,
+      survey:       signupData.survey,
+      utm_source:   params.get('utm_source')   || null,
+      utm_medium:   params.get('utm_medium')   || null,
+      utm_campaign: params.get('utm_campaign') || null,
+      referrer:     document.referrer          || null,
     };
-    console.log('Waitlist signup:', payload);
-    // TODO: Supabase insert here
+
+    const { error } = await db
+      .from('waitlist_signups')
+      .insert(payload);
+
+    if (error && error.code === '23505') {
+      showSuccess("You're already on the list! We'll be in touch before launch.");
+      return;
+    }
+
+    showSuccess();
+    fetchCount();
   }
 
   // ── Show success ──
-  function showSuccess() {
+  function showSuccess(message) {
     document.getElementById('step2').classList.add('step-hidden');
     document.getElementById('stepSuccess').classList.remove('step-hidden');
     document.getElementById('dot2').classList.remove('active');
     document.getElementById('dot2').classList.add('done');
     document.getElementById('stepIndicator').style.display = 'none';
+    if (message) document.querySelector('.step-success p').textContent = message;
+  }
+
+  // ── Live counter ──
+  async function fetchCount() {
+    const { data, error } = await db.rpc('get_waitlist_count');
+    if (!error && data != null) animateCounter(data);
   }
 
   // ── Counter animation ──
   function animateCounter(target) {
     const el = document.getElementById('counter');
-    let current = 0;
-    const step = Math.max(1, Math.floor(target / 35));
+    let current = parseInt(el.textContent) || 0;
+    const step = Math.max(1, Math.floor(Math.abs(target - current) / 35));
     const interval = setInterval(() => {
       current += step;
       if (current >= target) { current = target; clearInterval(interval); }
@@ -609,7 +644,7 @@
     }, 28);
   }
   const obs = new IntersectionObserver((entries) => {
-    entries.forEach(e => { if (e.isIntersecting) { animateCounter(47); obs.disconnect(); } });
+    entries.forEach(e => { if (e.isIntersecting) { fetchCount(); obs.disconnect(); } });
   });
   obs.observe(document.getElementById('counter'));
 
@@ -620,4 +655,5 @@
 </script>
 </body>
 </html>
+
 
