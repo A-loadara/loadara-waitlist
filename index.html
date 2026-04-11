@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Loadara | Dump Truck Logistics, Simplified</title>
+<title>Loadara | The operating system for dump truck fleets</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -237,17 +237,18 @@
     <span style="color:var(--white)">Loadara</span>
   </div>
   <div class="nav-right">
-    <a href="#features" class="nav-link">Features</a>
+    <a href="#how-it-works" class="nav-link">How It Works</a>
     <a href="#preview" class="nav-link">Preview</a>
     <a href="#who" class="nav-link">Who It's For</a>
-    <a href="#signup" class="btn-primary">Join Waitlist</a>
+    <a href="#signup" class="btn-primary">Get Early Access</a>
   </div>
 </nav>
 
 <section class="hero" id="signup">
   <div class="badge"><span class="badge-dot"></span>Accepting early access signups</div>
-  <h1>Stop chasing loads.<br>Start <span class="hl">loading</span> up.</h1>
-  <p class="subtitle">The AI-powered platform for dump truck operators, fleet owners, brokers, and contractors. Loads, trucks, and payments in one place.</p>
+  <h1>The <span class="hl">operating system</span><br>for dump truck fleets.</h1>
+  <p class="subtitle">Run dispatch, work tickets, invoicing, fleet operations, and revenue visibility in one place, without juggling texts, paper tickets, and spreadsheets.</p>
+  <p class="form-note" style="margin-top:-0.75rem;margin-bottom:1.25rem;font-size:0.78rem;">Built for owner-operators, fleets, brokers, and contractors who need one connected system.</p>
 
   <!-- Step indicator -->
   <div class="step-indicator" id="stepIndicator">
@@ -271,14 +272,14 @@
         <span class="role-chip" onclick="selectRole(this)">Broker</span>
         <span class="role-chip" onclick="selectRole(this)">Other</span>
       </div>
-      <p class="form-note">Free to join. We'll notify you before launch.</p>
+      <p class="form-note">Free to join. No spam. Early access updates only.</p>
     </div>
 
     <!-- ═══ STEP 2: Mini Questionnaire ═══ -->
     <div class="step-2 step-hidden" id="step2">
       <div class="q-header">
-        <h3>Help us build Loadara for you</h3>
-        <p>Takes 30 seconds. Every answer shapes what we build first.</p>
+        <h3>Optional, help us tailor early access</h3>
+        <p>Takes about 30 seconds. Your answers help us prioritize the right fleets first.</p>
       </div>
 
       <!-- Fleet size (adapts label based on role) -->
@@ -355,109 +356,43 @@
       </div>
 
       <div class="q-actions">
-        <button class="q-skip" onclick="skipStep2()">Skip for now</button>
-        <button class="q-submit" onclick="submitAll()">Complete Signup →</button>
+        <button class="q-skip" onclick="skipStep2()">Skip and join waitlist</button>
+        <button class="q-submit" onclick="submitAll()">Complete profile </button>
       </div>
     </div>
 
     <!-- ═══ SUCCESS ═══ -->
     <div class="step-success step-hidden" id="stepSuccess">
       <div class="success-check">✓</div>
-      <h3>You're on the list.</h3>
-      <p>We'll be in touch soon with early access details. Keep an eye on your inbox.</p>
+      <h3>You're on the waitlist.</h3>
+      <p>We’ll reach out with early access details as we onboard the right fleets first.</p>
     </div>
   </div>
 
-  <div class="stats-bar" style="display:none"><!-- Unhide when ready to show public count -->
+  <div class="stats-bar">
     <div class="stat-card">
-      <div class="stat-label">On Waitlist</div>
-      <div class="stat-value" id="counter">0</div>
+      <div class="stat-label">Core Promise</div>
+      <div class="stat-value" style="font-size:0.92rem;font-family:Inter,sans-serif;">Loads  Tickets  Invoices</div><span id="counter" style="display:none">0</span>
     </div>
     <div class="stat-card">
-      <div class="stat-label">Launch Modules</div>
-      <div class="stat-value">3</div>
+      <div class="stat-label">Built For</div>
+      <div class="stat-value" style="font-size:0.92rem;font-family:Inter,sans-serif;">Fleets with 1–25 trucks</div>
     </div>
     <div class="stat-card accent">
-      <div class="stat-label">Launch Year</div>
-      <div class="stat-value">2026</div>
-    </div>
-  </div>
-</section>
-
-<!-- PROBLEMS -->
-<section class="section">
-  <p class="section-label">The Problem</p>
-  <h2 class="section-title">Dump truck logistics is stuck in the past</h2>
-  <div class="pain-grid">
-    <div class="pain-card"><div class="pain-icon">📱</div><h3>Dispatch by text &amp; phone tag</h3><p>Juggling calls, texts, and group chats to fill trucks or find loads. One missed message means lost revenue.</p></div>
-    <div class="pain-card"><div class="pain-icon">💸</div><h3>60-90 day payment cycles</h3><p>You haul today, get paid in two months. Meanwhile fuel, tires, and insurance don't wait.</p></div>
-    <div class="pain-card"><div class="pain-icon">📄</div><h3>Lost tickets &amp; missing paperwork</h3><p>Paper tickets get lost in the cab, loads go unrecorded, and you're leaving money on the table because you can't prove the work happened.</p></div>
-    <div class="pain-card"><div class="pain-icon">🧩</div><h3>No single view of your operation</h3><p>Trucks in one app, invoices in another, dispatch in a group chat. You're stitching together your business from five different places every day.</p></div>
-  </div>
-</section>
-
-<!-- FEATURES -->
-<section class="section" id="features">
-  <p class="section-label">At Launch</p>
-  <h2 class="section-title">One platform for loads, trucks, and money</h2>
-  <div class="feature-grid">
-    <div class="feature-card">
-      <span class="feature-tag tag-dispatch">At Launch</span>
-      <h3>Smart Dispatch</h3>
-      <p>Create jobs, assign drivers, confirm dispatches, and track status in real time. Replace the group text.</p>
-    </div>
-    <div class="feature-card">
-      <span class="feature-tag tag-dispatch">At Launch</span>
-      <h3>Fleet Management</h3>
-      <p>Trucks, drivers, maintenance, compliance, and customers. Your entire operation in one place.</p>
-    </div>
-    <div class="feature-card">
-      <span class="feature-tag tag-dispatch">At Launch</span>
-      <h3>Work Tickets & Invoicing</h3>
-      <p>Log loads, generate invoices from completed tickets, and keep a clean billing trail.</p>
-    </div>
-  </div>
-</section>
-
-<section class="section" style="padding-top:0">
-  <p class="section-label">Roadmap</p>
-  <h2 class="section-title">What's coming next</h2>
-  <div class="feature-grid">
-    <div class="feature-card" style="opacity:0.7">
-      <span class="feature-tag tag-soon">Coming Next</span>
-      <h3>Payments & Fast Pay</h3>
-      <p>Process payments on-platform and get paid in days, not months. Invoicing, payouts, and invoice factoring built in.</p>
-    </div>
-    <div class="feature-card" style="opacity:0.7">
-      <span class="feature-tag tag-soon">Coming Next</span>
-      <h3>Load Marketplace</h3>
-      <p>Post and find dump truck loads beyond your existing network. Verified operators, transparent rates, direct booking.</p>
-    </div>
-    <div class="feature-card" style="opacity:0.7">
-      <span class="feature-tag tag-soon">Coming Next</span>
-      <h3>AI-Powered Matching</h3>
-      <p>Automatically match available trucks to posted jobs based on location, capacity, material type, and operator history.</p>
-    </div>
-    <div class="feature-card" style="opacity:0.7">
-      <span class="feature-tag tag-soon">Coming Next</span>
-      <h3>Analytics & Reporting</h3>
-      <p>Fleet utilization, revenue per truck, job profitability, and seasonal trends. See your whole operation in numbers.</p>
-    </div>
-    <div class="feature-card" style="opacity:0.7">
-      <span class="feature-tag tag-soon">Coming Next</span>
-      <h3>Integrations</h3>
-      <p>Connect to QuickBooks, telematics, fuel cards, compliance tools, and more. Loadara works with the tools you already use.</p>
+      <div class="stat-label">Why It Matters</div>
+      <div class="stat-value" style="font-size:0.92rem;font-family:Inter,sans-serif;">Nothing slips through billing</div>
     </div>
   </div>
 </section>
 
 <!-- PREVIEW -->
 <section class="section" id="preview" style="text-align:center;">
-  <p class="section-label">Sneak Peek</p>
-  <h2 class="section-title" style="margin-left:auto;margin-right:auto;">Built for how you actually work</h2>
+  <p class="section-label">Product Preview</p>
+  <h2 class="section-title" style="margin-left:auto;margin-right:auto;">Built to run the operation, not just one part of it</h2>
+  <p class="subtitle" style="max-width:560px;margin:0 auto 1.5rem;">From jobs and drivers to tickets, invoices, and cash flow, every part of the business stays connected.</p>
   <div class="preview-cards">
     <div class="preview-frame">
-      <div class="preview-header"><div class="ph-label">Driver View</div><div class="ph-title">Today's Dispatches</div><div class="ph-sub">Truck #101 · Big Red</div></div>
+      <div class="preview-header"><div class="ph-label">Driver View</div><div class="ph-title">Tickets and dispatches</div><div class="ph-sub">What the driver needs, without the clutter</div></div>
       <div class="preview-body">
         <div class="preview-row"><div class="preview-row-left"><span>ABC Excavating</span><span class="row-sub">6:00 AM · Clean Fill</span></div><span class="status status-confirmed">Confirmed</span></div>
         <div class="preview-row"><div class="preview-row-left"><span>Lakefront Development</span><span class="row-sub">7:00 AM · Crushed Stone</span></div><span class="status status-progress">In Progress</span></div>
@@ -465,7 +400,7 @@
       </div>
     </div>
     <div class="preview-frame">
-      <div class="preview-header"><div class="ph-label">Fleet View</div><div class="ph-title">Dispatch Board</div><div class="ph-sub">Real-time operations command center</div></div>
+      <div class="preview-header"><div class="ph-label">Fleet View</div><div class="ph-title">Operations board</div><div class="ph-sub">Dispatch, ticket review, and daily visibility</div></div>
       <div class="preview-stats">
         <div class="preview-stat"><div class="ps-label">Active Jobs</div><div class="ps-val">5</div></div>
         <div class="preview-stat"><div class="ps-label">Drivers Working</div><div class="ps-val">4</div></div>
@@ -476,22 +411,79 @@
   </div>
 </section>
 
+<!-- PROBLEMS -->
+<section class="section">
+  <p class="section-label">The Problem</p>
+  <h2 class="section-title">Most dump truck businesses are still stitched together from texts, paper, and spreadsheets.</h2>
+  <div class="pain-grid">
+    <div class="pain-card"><div class="pain-icon">📱</div><h3>Operations live in texts and calls</h3><p>Jobs, truck assignments, and day to day changes get coordinated through calls, texts, and group chats. One missed message can mean one missed load.</p></div>
+    <div class="pain-card"><div class="pain-icon">💸</div><h3>You work today and get paid months later</h3><p>Cash keeps going out for fuel, tires, payroll, and insurance while billing gets delayed.</p></div>
+    <div class="pain-card"><div class="pain-icon">📄</div><h3>Lost tickets become lost revenue</h3><p>Paper tickets disappear, loads go unrecorded, and you cannot bill cleanly for work you can’t prove happened.</p></div>
+    <div class="pain-card"><div class="pain-icon">🧩</div><h3>Your business is scattered across tools</h3><p>Dispatch in one place, invoices in another, compliance somewhere else, and the rest in spreadsheets. You are stitching together the business every day.</p></div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section class="section" id="how-it-works">
+  <p class="section-label">Operating System</p>
+  <h2 class="section-title">One connected system for operations, proof of work, and revenue</h2>
+  <div class="feature-grid">
+    <div class="feature-card">
+      <span class="feature-tag tag-dispatch">Step 1</span>
+      <h3>Operations and crew coordination</h3>
+      <p>Create jobs, assign drivers and trucks, and keep the day moving without relying on calls, texts, and memory.</p>
+    </div>
+    <div class="feature-card">
+      <span class="feature-tag tag-dispatch">Step 2</span>
+      <h3>Work captured as it happens</h3>
+      <p>Track loads, tickets, trucks, drivers, maintenance, and compliance in one place instead of across scattered tools.</p>
+    </div>
+    <div class="feature-card">
+      <span class="feature-tag tag-dispatch">Step 3</span>
+      <h3>Revenue visibility built in</h3>
+      <p>Turn completed work into invoices, track payments and receivables, and keep a clean trail from job to cash collected.</p>
+    </div>
+  </div>
+</section>
+
+<section class="section" style="padding-top:0">
+  <p class="section-label">Expanding Next</p>
+  <h2 class="section-title">Start with the core operating system, then expand from there</h2>
+  <div class="feature-grid">
+    <div class="feature-card" style="opacity:0.88">
+      <span class="feature-tag tag-soon">Next Up</span>
+      <h3>Payments &amp; fast pay</h3>
+      <p>Shorten the gap between completed work and collected cash with faster billing and payout workflows.</p>
+    </div>
+    <div class="feature-card" style="opacity:0.88">
+      <span class="feature-tag tag-soon">Next Up</span>
+      <h3>Broker and contractor workflows</h3>
+      <p>Expand beyond internal fleet workflows with broker postings, tenders, and better carrier and job coordination.</p>
+    </div>
+    <div class="feature-card" style="opacity:0.88">
+      <span class="feature-tag tag-soon">Next Up</span>
+      <h3>Integrations &amp; automation</h3>
+      <p>Connect accounting, telematics, OCR, and workflow automation once the operational core is live.</p>
+    </div>
+  </div>
+</section>
+
 <!-- WHO IT'S FOR -->
 <section class="section" id="who">
   <p class="section-label">Who It's For</p>
-  <h2 class="section-title">Built for operators, owners, and everyone in between</h2>
+  <h2 class="section-title">Built for the businesses that keep dump truck work moving</h2>
   <div class="audience-grid">
-    <div class="audience-card"><div class="audience-emoji">🚛</div><h3>Owner-Operators</h3><p>Find loads, get paid faster, and stop relying on word-of-mouth. Your truck, your business, your data.</p></div>
-    <div class="audience-card"><div class="audience-emoji">🚧</div><h3>Fleet Owners</h3><p>Dispatch your trucks, manage your drivers, and handle billing from one place. Run the fleet, not the paperwork.</p></div>
-    <div class="audience-card"><div class="audience-emoji">🏗️</div><h3>Contractors &amp; GCs</h3><p>Need 15 trucks at a site by 7am? Post the job, get matched, and track every load. No spreadsheet required.</p></div>
-    <div class="audience-card"><div class="audience-emoji">📋</div><h3>Brokers</h3><p>Connect contractors to haulers, manage your carrier network, and keep every job and payment organized in one platform.</p></div>
+    <div class="audience-card"><div class="audience-emoji">🚛</div><h3>Owner-Operators</h3><p>Run your business without juggling dispatch, tickets, billing, and truck management across different tools.</p></div>
+    <div class="audience-card"><div class="audience-emoji">🚧</div><h3>Fleet Owners</h3><p>Manage trucks, drivers, tickets, compliance, maintenance, and revenue from one operating system.</p></div>
+    <div class="audience-card"><div class="audience-emoji">🏗️</div><h3>Contractors &amp; GCs</h3><p>Coordinate trucks, track work performed, and document every load with less back and forth and fewer surprises.</p></div>
+    <div class="audience-card"><div class="audience-emoji">📋</div><h3>Brokers</h3><p>Manage postings, carriers, tenders, and fulfillment in one place as the network side of the business grows.</p></div>
   </div>
 </section>
 
 <section class="bottom-cta">
-  <h2>The dump truck industry deserves better tools.</h2>
-  <p>Join the operators and contractors getting early access.</p>
-  <a href="#signup" class="btn-primary" style="font-size:0.9rem;padding:0.65rem 1.75rem;">Join the Waitlist →</a>
+  <h2>Run your dump truck business in one connected system.</h2>
+  <p>Join the waitlist to get early access to the operating system built for dump truck fleets, brokers, and contractors.</p>
+  <a href="#signup" class="btn-primary" style="font-size:0.9rem;padding:0.65rem 1.75rem;" >Get Early Access</a>
 </section>
 
 <footer>
@@ -528,7 +520,7 @@
     signupData.survey[group] = selected;
   }
 
-  // ── Step 1 → Step 2 ──
+  // ── Step 1  Step 2 ──
   function goToStep2() {
     const email = document.getElementById('emailInput').value.trim();
     if (!email || !email.includes('@')) {
@@ -624,7 +616,7 @@
       .insert(payload);
 
     if (error && error.code === '23505') {
-      showSuccess("You're already on the list! We'll be in touch before launch.");
+      showSuccess("You’re already on the waitlist. We’ll be in touch before early access opens.");
       return;
     }
 
@@ -674,4 +666,3 @@
 <script defer src="/_vercel/insights/script.js"></script>
 </body>
 </html>
-
